@@ -1,0 +1,861 @@
+---
+title: "Children's inferences about unmentioned groups from generic statements"
+author: "Kelsey Moty"
+date: "May 2, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Loading in relevant libraries and packages
+library(Rmisc) # for summarySE function
+library(tidyverse) # for basically everything
+library(here) # for loading in our data
+library(geepack)
+library(lubridate)
+library(emmeans)
+```
+
+## Study 1
+```{r import_expt1, include=FALSE}
+# Importing Study 1 data (both children and adults) into single data frame
+source(here::here("03_analysis", "expt1", "code", "pidi1_import_data.R"))
+```
+
+```{r tidy_expt1, include=FALSE}
+# Tidying up dataset
+source(here::here("03_analysis", "expt1", "code", "pidi1_tidy_data.R"))
+```
+
+```{r age_expt1, include=FALSE}
+# Computing participant age and filtering out kids that are younger than 4 or 7 and older
+source(here::here("03_analysis", "expt1", "code", "pidi1_compute_age.R"))
+```
+
+```{r drop_expt1, include=FALSE}
+# dropping participants
+# Criterion for dropping participants:
+# Adult participants who didn't pass the audio checks
+# Adult participants who failed both attention checks
+# No children were excluded for manipulation checks
+# Adults and children were excluded for not correctly responding to control trials in pragmatic task
+source(here::here("03_analysis", "expt1", "code", "pidi1_drop_participants.R"))
+```
+
+```{r analyses_expt1, include=FALSE}
+
+```
+
+```{r plot1_expt1}
+source(here::here("03_analysis", "expt3", "code", "plot_prop_inference_cont.R"))
+
+expt1_test_children <- expt1_test %>%
+  filter(age_exact < 7) %>%
+  distinct(id, stimulus, .keep_all = TRUE)
+
+expt1_plot_prop_extension <- plot_prop_inference_cont(
+     expt1_test_children,
+     y_var = "response_avg", 
+     x_var = "age_exact", 
+     group_var = "stimulus", 
+     facet_var = "subjectGroup"
+  ) + 
+  labs(x = "Age",
+       y = "Proportion of trials"
+  ) +
+  scale_shape_manual(name = "Group membership",
+                     labels = c("Unmentioned", "Previously mentioned"), 
+                     values = c(21,22)
+  ) + 
+  scale_color_manual(name = "Group membership",
+                     labels = c("Unmentioned", "Previously mentioned"),
+                     values = c("#58b947", "#d9be00")
+  ) +
+  scale_fill_manual(name = "Group membership",
+                    labels = c("Unmentioned", "Previously mentioned"), 
+                    values = c("#58b947", "#d9be00")
+  ) +
+  guides(fill = FALSE,
+         shape = FALSE,
+         color = guide_legend(override.aes = list(fill = c("#d9be00", "#58b947")),
+                              reverse = TRUE,
+                              title.position = "top",
+                              title.hjust = 0.5)
+  ) 
+
+expt1_plot_prop_extension
+```
+
+```{r plot2_expt1}
+expt1_inference_children <- expt1_inference %>%
+  filter(age_exact < 7) %>%
+  distinct(id, .keep_all = TRUE)
+
+expt1_plot_inference <- ggplot(
+  expt1_inference_children, 
+  aes(x = age_exact,
+      y = inf_avg, 
+      fill = subjectGroup,
+      color = subjectGroup,
+      group = subjectGroup,
+      shape = subjectGroup)) +
+  theme_classic() +
+  geom_point(
+    alpha = .3,
+    size = 2
+  ) + 
+  geom_smooth(
+    method = "lm",
+    size = 2
+    ) +
+  labs(x = "Age",
+       y = "",
+       title = "Proportion of trials children inferred mentioned\ngroup has property AND unmentioned group does not",
+       fill = element_blank()) +
+  scale_x_continuous(breaks = c(4, 5, 6, 7), 
+                     labels = c("4", "5", "6", "7"),
+                     limits = c(4, 7)
+  ) +
+  theme(panel.grid.major = element_blank(),
+        strip.background = element_blank(),
+        plot.title = element_text(size = 30, face = "bold",
+                             margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.title.x = element_text(size = 30, face = "bold",
+                                    margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        axis.title.y = element_text(size = 32, face = "bold",
+                                    margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.text.x = element_text(size = 28),
+        axis.text.y = element_text(size = 28),
+        strip.text = element_text(size = 28),
+        legend.text = element_text(size = 28),
+        legend.title = element_text(size = 28)
+        ) +
+  scale_shape_manual(name = "Condition:",
+                     labels = c("Generic", "Specific"),
+                     values = c(21, 22)
+  ) +
+  scale_color_manual(name = "Condition:",
+                     labels = c("Generic", "Specific"),
+                     values = c( "#e39b2b", "#619f97")
+  ) +
+  scale_fill_manual(name = "Condition:",
+                    labels = c("Generic", "Specific"),
+                    values = c("#e39b2b", "#619f97")
+  ) +
+  guides(fill = FALSE,
+         shape = FALSE,
+         color = guide_legend(override.aes = list(fill = c("#e39b2b", "#619f97")),
+                              title.position = "top",
+                              title.hjust = 0.5)
+  ) 
+
+```
+
+## Study 2
+```{r import_expt2, include=FALSE}
+# Importing Study 2 data into single data frame
+source(here::here("03_analysis", "expt2", "code", "pidi2_import_data.R"))
+```
+
+```{r tidy_expt2, include=FALSE}
+# Tidying up dataset
+source(here::here("03_analysis", "expt2", "code", "pidi2_tidy_data.R"))
+```
+
+```{r age_expt2, include=FALSE}
+# Computing participant age and filtering out kids that are younger than 4 or 7 and older
+source(here::here("03_analysis", "expt2", "code", "pidi2_compute_age.R"))
+```
+
+```{r drop_expt2, include=FALSE}
+# dropping participants
+# Criterion for dropping participants:
+# No children were excluded for manipulation checks
+# Children were excluded for not correctly responding to control trials in pragmatic task
+source(here::here("03_analysis", "expt2", "code", "pidi2_drop_participants.R"))
+```
+
+
+```{r plot1_expt2}
+source(here::here("03_analysis", "expt2", "code", "pidi2_plot_property_extension.R"))
+
+expt2_test_children <- expt2_test %>%
+  distinct(id, stimulus, .keep_all = TRUE)
+
+expt2_plot_prop_extension
+```
+
+```{r plot2_expt2}
+expt2_inference_children <- expt2_inference %>%
+  distinct(id, .keep_all = TRUE)
+
+expt2_plot_inference <- ggplot(
+  expt2_inference_children, 
+  aes(x = age_exact,
+      y = inf_avg, 
+      fill = subjectGroup,
+      color = subjectGroup,
+      group = subjectGroup,
+      shape = subjectGroup)) +
+  theme_classic() +
+  geom_point(
+    alpha = .3,
+    size = 2
+  ) + 
+  geom_smooth(
+    method = "lm",
+    size = 2
+    ) +
+  labs(x = "Age",
+       y = "",
+       title = "Proportion of trials children inferred mentioned\ngroup has property AND unmentioned group does not",
+       fill = element_blank()) +
+  scale_x_continuous(breaks = c(4, 5, 6, 7), 
+                     labels = c("4", "5", "6", "7"),
+                     limits = c(4, 7)
+  ) +
+  theme(panel.grid.major = element_blank(),
+        strip.background = element_blank(),
+        plot.title = element_text(size = 30, face = "bold",
+                             margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.title.x = element_text(size = 30, face = "bold",
+                                    margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        axis.title.y = element_text(size = 32, face = "bold",
+                                    margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.text.x = element_text(size = 28),
+        axis.text.y = element_text(size = 28),
+        strip.text = element_text(size = 28),
+        legend.text = element_text(size = 28),
+        legend.title = element_text(size = 28)
+        ) +
+  scale_shape_manual(name = "Condition:",
+                     labels = c("Generic", "Specific"),
+                     values = c(21, 22)
+  ) +
+  scale_color_manual(name = "Condition:",
+                     labels = c("Generic", "Specific"),
+                     values = c( "#e39b2b", "#619f97")
+  ) +
+  scale_fill_manual(name = "Condition:",
+                    labels = c("Generic", "Specific"),
+                    values = c("#e39b2b", "#619f97")
+  ) +
+  guides(fill = FALSE,
+         shape = FALSE,
+         color = guide_legend(override.aes = list(fill = c("#e39b2b", "#619f97")),
+                              title.position = "top",
+                              title.hjust = 0.5)
+  ) 
+
+```
+
+
+## Study 3
+```{r import_expt3, include=FALSE}
+# Cleaning up child data
+source(here::here("03_analysis", "expt3", "code", "pidi2_child_data_cleaning.R"))
+
+# Cleaning up the adult data
+source(here::here("03_analysis", "expt3", "code", "pidi2_mturk_data_cleanup.R"))
+```
+
+```{r }
+# Computing group-level descripties for adult and child data
+
+```
+
+
+Computing averages by condition
+```{r}
+# summary <- data %>% 
+#   distinct(id, .keep_all = TRUE) %>% 
+#   group_by(condition, age_year) %>% 
+#   summarize(
+#     zarpie_avg = mean(zarpie_response_avg, na.rm = TRUE),
+#     gorp_avg = mean(gorp_response_avg, na.rm = TRUE)
+#   ) %>% 
+#   filter(age_year > 3 & age_year < 7) %>% 
+#   gather(stimulus, response, zarpie_avg, gorp_avg) %>% 
+#   mutate(stimulus = gsub("_avg", "", stimulus))
+
+summary_data <- expt3_child %>% 
+  dplyr::select(id, age_exact, age_year, condition, action, response, zarpie_response_avg, gorp_response_avg) %>% 
+  dplyr::filter(str_detect(action, "zarpie") | str_detect(action, "gorp")) %>% 
+  tidyr::separate(action, c("action", "stimulus"), sep = "_") %>% 
+  dplyr::mutate(response = as.numeric(response))
+
+summary_of_the_summary_data <- summary_data %>% 
+  dplyr::select(id, age_year, age_exact, condition, zarpie_response_avg, gorp_response_avg) %>% 
+  tidyr::gather(stimulus, response, zarpie_response_avg, gorp_response_avg) %>%
+  dplyr::mutate(stimulus = gsub("_response_avg", "", stimulus)) %>% 
+  dplyr::distinct(id, stimulus, .keep_all = TRUE) %>% 
+  dplyr::filter(age_year >= 3 & age_year <= 7)
+
+summary_of_the_summary_data %>%
+  group_by(age_year, condition) %>%
+  distinct(id) %>%
+  tally()
+
+summary <- summarySE(summary_data, measurevar = "response", groupvars = c("stimulus", "condition", "age_year"))
+
+summary <- summary %>% 
+  filter(age_year > 3 & age_year < 8)
+```
+
+
+```{r}
+# Study1a_data_summary <- summarySE(dataset_keep_test, 
+#                           measurevar = "response",
+#                           groupvars = c("stimulus", 
+#                                         "subjectGroup", 
+#                                         "age_categorical")
+#                           )
+# Study1a_dataset_plot <- dataset_keep_test %>% filter(property == "pizza")
+# names(Study1a_dataset_plot)[names(Study1a_dataset_plot) == 'age_categorical'] <- "age"
+# names(Study1a_dataset_plot)[names(Study1a_dataset_plot) == 'subjectGroup'] <- "condition"
+# names(Study1a_data_summary)[names(Study1a_data_summary) == 'age_categorical'] <- "age"
+# names(Study1a_data_summary)[names(Study1a_data_summary) == 'subjectGroup'] <- "condition"
+# Study1a_data_summary$age <- factor(Study1a_data_summary$age, levels=c('4','5','6','30'))
+
+
+# facetNames <- c(`4` = "4",`5` = "5",`6` = "6",`30` = "Adult")
+plot_inference <- ggplot(data = summary) + 
+  facet_grid (
+     ~ age_year,
+    # labeller = as_labeller(facetNames),
+    drop = TRUE
+  ) +
+  scale_y_continuous(expand = c(0, 0)
+  ) +
+  # scale_x_discrete(labels = c("generic" = "g", "specific" = "s")
+  # ) +
+  coord_cartesian(ylim=c(-.05, 1.05)
+  ) + 
+  labs(x = "Condition",
+       y = "Proportion of responses extending \nproperty to new individual"
+  ) +
+  theme(text         = element_text(size = 14),
+        axis.title.x = element_text(size = 14, 
+                                    face = "bold",
+                                    margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        axis.title.y = element_text(size = 14, 
+                                    face = "bold",
+                                    margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        strip.text = element_text(size = 12),
+        strip.background = element_blank(),
+        panel.border = element_rect(color = "black", fill = NA),
+        panel.background = element_rect(fill = NA)
+  ) + 
+  geom_point(data = summary_of_the_summary_data,
+             aes(y = response,
+                 x = condition,
+                 color = stimulus,
+                 shape = stimulus),
+             position = position_jitter(w = 0.3, h = 0.02),
+             size = 2,
+             alpha = 1/2
+  ) +
+  geom_errorbar(aes(x = condition,
+                    ymin = response - se,
+                    ymax = response + se),
+                width = .05
+  ) +
+  geom_point(aes(x = condition, 
+                 y = response, 
+                 fill = stimulus, 
+                 shape = stimulus),
+             size = 6
+
+  ) + 
+  scale_shape_manual(name = "group \nmembership",
+                     labels = c("opposite", "same"), 
+                     values = c(21,22)
+  ) + 
+  scale_color_manual(name = "group \nmembership",
+                     labels = c("opposite", "same"),
+                     values = c("#57C478", "#E9AE0B")
+  ) +
+  scale_fill_manual(name = "group \nmembership",
+                    labels = c("opposite", "same"), 
+                    values = c("#57C478", "#E9AE0B")
+  ) +
+  guides(fill = guide_legend(reverse=T),
+         shape = guide_legend(reverse=T),
+         color = FALSE
+  ) 
+  
+
+plot_inference
+```
+
+Plotting number of trials that participants extend property to members of each group (whether same or opposite group members)
+```{r}
+grab_code <- here::here("03_analysis", "expt3", "code", "plot_prop_inference_cont.R")
+source(grab_code)
+
+expt3_plot_prop_extension <- plot_prop_inference_cont(
+     summary_of_the_summary_data,
+     y_var = "response", 
+     x_var = "age_exact", 
+     group_var = "stimulus", 
+     facet_var = "condition"
+  ) + 
+  labs(x = "Age",
+       y = "Proportion of trials"
+  ) +
+  scale_shape_manual(name = "Group membership",
+                     labels = c("Unmentioned", "Previously mentioned"), 
+                     values = c(21,22)
+  ) + 
+  scale_color_manual(name = "Group membership",
+                     labels = c("Unmentioned", "Previously mentioned"),
+                     values = c("#58b947", "#d9be00")
+  ) +
+  scale_fill_manual(name = "Group membership",
+                    labels = c("Unmentioned", "Previously mentioned"), 
+                    values = c("#58b947", "#d9be00")
+  ) +
+  guides(fill = FALSE,
+         shape = FALSE,
+         color = guide_legend(override.aes = list(fill = c("#d9be00", "#58b947")),
+                              reverse = TRUE,
+                              title.position = "top",
+                              title.hjust = 0.5)
+  ) 
+
+  
+expt3_plot_prop_extension
+```
+
+```{r}
+summary_inference <- summary_data %>%
+  tidyr::spread(stimulus, response) %>% 
+  mutate(inf_yes = ifelse(zarpie == 1 & gorp == 0, 1, 0),
+         study = 2) 
+
+pidi2_kids <- summary_inference %>%  
+  dplyr::group_by(id) %>%
+  dplyr::mutate(inf_yes_avg = mean(inf_yes, na.rm = TRUE)) 
+
+summary_inference <- pidi2_kids %>%
+  distinct(id, .keep_all = TRUE)
+
+summary_inference <- summary_inference %>%
+  filter(age_exact >= 3.5 & age_exact < 8)
+
+```
+
+
+```{r}
+expt3_plot_inference <- ggplot(
+  summary_inference, 
+  aes(x = age_exact,
+      y = inf_yes_avg, 
+      fill = condition,
+      color = condition,
+      group = condition,
+      shape = condition)) +
+  theme_classic() +
+  geom_point(
+    alpha = .3,
+    size = 2
+  ) + 
+  geom_smooth(
+    method = "lm",
+    size = 1
+    ) +
+  labs(x = "Age",
+       y = "",
+       title = "Proportion of trials children inferred mentioned\ngroup has property AND unmentioned group does not",
+       fill = element_blank()) +
+  scale_x_continuous(breaks = c(4, 5, 6, 7), 
+                     labels = c("4", "5", "6", "7"),
+                     limits = c(4, 7.5)
+  ) +
+  theme(panel.grid.major = element_blank(),
+        strip.background = element_blank(),
+        plot.title = element_text(size = 30, face = "bold",
+                             margin = margin(t = 0, r = 0, b = 20, l = 0)),
+        axis.title.x = element_text(size = 30, face = "bold",
+                                    margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        axis.title.y = element_text(size = 32, face = "bold",
+                                    margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.text.x = element_text(size = 28),
+        axis.text.y = element_text(size = 28),
+        strip.text = element_text(size = 28),
+        legend.text = element_text(size = 28),
+        legend.title = element_text(size = 28)
+        ) +
+  scale_shape_manual(name = "Speaker's knowledge of\nzarpies and gorps:",
+                     labels = c("Knowledgeable", "Not knowledgeable"),
+                     values = c(21, 22)
+  ) +
+  scale_color_manual(name = "Speaker's knowledge of\nzarpies and gorps:",
+                     labels = c("Knowledgeable", "Not knowledgeable"),
+                     values = c( "#e39b2b", "#619f97")
+  ) +
+  scale_fill_manual(name = "Speaker's knowledge of\nzarpies and gorps:",
+                    labels = c("Knowledgeable", "Not knowledgeable"),
+                    values = c("#e39b2b", "#619f97")
+  ) +
+  guides(fill = FALSE,
+         shape = FALSE,
+         color = guide_legend(override.aes = list(fill = c("#e39b2b", "#619f97")),
+                              title.position = "top",
+                              title.hjust = 0.5)
+  ) 
+```
+
+
+```{r}
+summary_of_summary_inf <- summarySE(summary_inference, measurevar = "inf_yes", groupvars = c("condition", "age_year") )
+
+
+```
+
+
+```{r}
+pidi2_mturk <- pidi2_individual
+
+pidi2_individual <- pidi2_individual %>% 
+  dplyr::distinct(id, .keep_all = TRUE) %>% 
+  mutate(inf_yes = ifelse(inf_yes == "yes", 1, 0),
+         condition = ifelse(condition == "noknowledge", "no knowledge", condition),
+         age_exact = 8,
+         study = 2) 
+
+
+pidi2_allparticipants <- bind_rows(pidi2_individual, summary_inference)
+
+pidi2_inf_summary <- pidi2_inf_summary %>%
+  dplyr::mutate(
+    age_exact = 8,
+    condition = ifelse(condition == "noknowledge", "no knowledge", condition),
+    study = 2
+    )
+```
+
+```{r}
+pidi1_inference_summary$study <- 1
+
+pidi1b_individual <- pidi1b_inference_summary %>% 
+  dplyr::rename(condition = subjectGroup) %>% 
+  dplyr::mutate(age_exact = ifelse(age_exact > 8, 8, age_exact))
+
+pidi1b_individual_kids <- pidi1b_individual %>%
+  filter(child == "yes")
+  
+pidi1_individual_adults <- pidi1_individual %>%
+  filter(child == "no")
+
+pidi1_individual_adults <- pidi1_individual_adults %>%
+  dplyr::filter(
+         participant != "A1160COTUR26JZ" & 
+         participant != "A23EWFNNOUS10B" &
+         participant != "A267GLM78AMQ75" & 
+         participant != "A26PMB0H8DGX7S" & 
+         participant != "A3JLE2LJ5I17E2" & 
+         participant != "AJ4WQY338BIMN" &
+         participant != "ATHS9CW2FLYUY")
+
+summary_pidi1_adults <- summarySE(pidi1_individual_adults, measurevar = "inf_yes_avg", groupvars = c("condition") )
+summary_pidi1_adults$study <- 1
+summary_pidi1_adults$age_exact <- 8
+
+
+```
+
+
+```{r}
+thepoint <- data.frame(
+  age_exact = 4.73,
+  inf_yes_avg = .438
+)
+
+study1b <- ggplot() +
+  theme_classic() +
+  geom_smooth(
+    data = pidi1b_individual_kids,
+    aes(x = age_exact,
+        y = inf_yes_avg, 
+        fill = condition,
+        group = condition,
+        shape = condition),
+    method = "lm",
+    color = "black",
+    size = .7
+    ) +
+  geom_point(
+    data = pidi1b_individual,
+    aes(x = age_exact,
+        y = inf_yes_avg,
+        fill = condition,
+        group = condition,
+        shape = condition),
+    position = position_jitter(w = 0, h = .02),
+    alpha = .3
+  ) +
+  # geom_errorbar(
+  #   data = summary_pidi1_adults, 
+  #   aes(x = age_exact,
+  #       ymin = inf_yes_avg - ci,
+  #       ymax = inf_yes_avg + ci),
+  #    width = .05
+  # ) +
+  # geom_point(
+  #   data = summary_pidi1_adults,
+  #   aes(x = age_exact,
+  #       y = inf_yes_avg, 
+  #       fill = condition,
+  #       group = condition,
+  #       shape = condition),
+  #   size = 5
+  # ) +
+  labs(x = "Age",
+       y = "Proportion of trials\nparticipants made inference",
+       title = "Study 1 & 2",
+       fill = element_blank()) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_x_continuous(breaks = c(4, 5, 6, 7), 
+                     labels = c("4", "5", "6", "7"),
+                     limits = c(4, 7)
+  ) +
+  theme(panel.grid.major = element_blank(),
+        strip.background = element_blank(),
+        axis.title.x = element_text(size = 14, face = "bold",
+                                    margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        axis.title.y = element_text(size = 14, face = "bold",
+                                    margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        strip.text = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        legend.position = "bottom"
+        ) +
+  scale_shape_manual(name = "Condition:",
+                     labels = c("Generic Language", "Specific Language"),
+                     values = c(21, 22)
+  ) +
+  scale_color_manual(name = "Condition:",
+                     labels = c("Generic Language", "Specific Language"),
+                     values = c("#57C478", "#E9AE0B")
+  ) +
+  scale_fill_manual(name = "Condition:",
+                    labels = c("Generic Language", "Specific Language"),
+                    values = c("#57C478", "#E9AE0B")
+  ) +
+  guides(fill = guide_legend(reverse=F),
+         shape = guide_legend(reverse=F),
+         color = FALSE
+  ) 
+  # geom_point(
+  #   data = thepoint,
+  #   aes(x = age_exact,
+  #       y = inf_yes_avg)
+  # )
+study1b
+```
+
+
+```{r}
+study2 <- ggplot(summary_inference, aes(x = age_exact,
+                   y = inf_yes_avg, 
+                   fill = condition,
+                   group = condition,
+                   shape = condition)) +
+  theme_classic() +
+  geom_smooth(
+    method = "lm",
+    color = "black",
+    size = .7
+    ) +
+  geom_point(
+    alpha = .3
+  ) + 
+  # geom_point(
+  #   data = pidi2_individual,
+  #   aes(x = age_exact,
+  #       y = inf_yes_avg, 
+  #       fill = condition,
+  #       group = condition,
+  #       shape = condition),
+  #   position = position_jitter(w = .2, h = .02),
+  #   alpha = .3
+  # ) +
+  geom_errorbar(
+    data = pidi2_inf_summary, 
+    aes(x = age_exact,
+        ymin = inf_yes_avg - ci,
+        ymax = inf_yes_avg + ci),
+     width = .05
+  ) +
+  # geom_point(
+  #   data = pidi2_inf_summary,
+  #   aes(x = age_exact,
+  #       y = inf_yes_avg, 
+  #       fill = condition,
+  #       group = condition,
+  #       shape = condition),
+  #   size = 5
+  # ) +
+  labs(x = "Age",
+       y = "",
+       title = "Study 3",
+       fill = element_blank()) +
+  scale_y_continuous(expand = c(0, 0)) +
+  scale_x_continuous(breaks = c(4, 5, 6, 7), 
+                     labels = c("4", "5", "6", "7"),
+                     limits = c(4, 7.5)
+  ) +
+  theme(panel.grid.major = element_blank(),
+        strip.background = element_blank(),
+        axis.title.x = element_text(size = 14, face = "bold",
+                                    margin = margin(t = 20, r = 0, b = 0, l = 0)),
+        axis.title.y = element_text(size = 14, face = "bold",
+                                    margin = margin(t = 0, r = 20, b = 0, l = 0)),
+        axis.text.x = element_text(size = 12),
+        axis.text.y = element_text(size = 12),
+        strip.text = element_text(size = 12),
+        legend.text = element_text(size = 10),
+        legend.position = "bottom"
+        ) +
+  scale_shape_manual(name = "Condition:",
+                     labels = c("Knowledgeable Speaker", "Unknowledgeable Speaker"),
+                     values = c(21, 22)
+  ) +
+  scale_color_manual(name = "Condition:",
+                     labels = c("Knowledgeable Speaker", "Unknowledgeable Speaker"),
+                     values = c( "#e39b2b", "#619f97")
+  ) +
+  scale_fill_manual(name = "Condition:",
+                    labels = c("Knowledgeable Speaker", "Unknowledgeable Speaker"),
+                    values = c("#e39b2b", "#619f97")
+  ) +
+  guides(fill = guide_legend(reverse=F),
+         shape = guide_legend(reverse=F),
+         color = FALSE
+  ) 
+
+study2
+```
+
+
+
+
+```{r}
+
+cds_plot <- ggarrange(study1b, study2, labels = c("A", "B"))
+```
+
+
+
+
+```{r}
+pidi2_inference <- bind_rows(pidi2_kids, pidi2_mturk)
+
+pidi2_inference <- pidi2_inference %>%
+  mutate(age_year = ifelse(startsWith(id, "R"), 35, age_year),
+         condition = ifelse(condition == "noknowledge", "no knowledge", condition)) 
+
+pidi2_inference <- pidi2_inference %>%
+  mutate(age_year = as.factor(as.character(age_year)),
+         condition = as.factor(condition)) 
+
+pidi2_kids <- pidi2_kids %>%
+  mutate(condition = as.factor(condition)) 
+
+pidi2_kids_nonas <- pidi2_kids %>%
+  filter(!is.na(age_exact))
+
+library(geepack)
+library(emmeans)
+library(lme4)
+```
+
+```{r}
+pidi2_inference_reduced <- pidi2_inference %>% 
+  filter(age_year != "3") 
+
+pidi2_inference_reduced$age_year <- ifelse(pidi2_inference_reduced$age_year == "7", "6", as.character(pidi2_inference_reduced$age_year))
+
+pidi2_inference_reduced <- pidi2_inference_reduced %>%
+  mutate(age_year = factor(as.character(age_year), levels = c("4", "5", "6", "35")))
+
+pidi2_inference_reduced_kids <- pidi2_inference_reduced %>%
+  filter(age_year != "35")
+
+pidi2_inference_reduced_kids <- pidi2_inference_reduced_kids %>%
+  mutate(age_year = factor(as.character(age_year), levels = c("4", "5", "6")))
+
+# Main GEE
+results_pidi2 <- geeglm(
+  inf_yes ~ condition + age_year + condition*age_year, 
+  data = pidi2_inference_reduced_kids, 
+  family = binomial(logit), 
+  id = id, 
+  corstr = "exchangeable")
+summary(results_pidi2)
+results_anova_test <- anova(results_pidi2)
+results_anova_test
+
+pairs(emmeans(results_pidi2, ~ condition | age_year))
+
+
+results_pidi2_kids <- geeglm(
+  inf_yes ~ condition + age_exact + condition*age_exact, 
+  data = pidi2_kids_nonas, 
+  family = binomial(logit), 
+  id = id, 
+  corstr = "exchangeable")
+summary(results_pidi2_kids)
+results_anova_test <- anova(results_pidi2_kids)
+results_anova_test
+
+pidi2_kids_knowledge <- pidi2_kids_nonas %>% 
+  filter(condition == "knowledge")
+
+pidi2_kids_noknowledge <- pidi2_kids_nonas %>% 
+  filter(condition == "no knowledge")
+
+results_pidi2_kids_k <- geeglm(
+  inf_yes ~ age_exact, 
+  data = pidi2_kids_knowledge, 
+  family = binomial(logit), 
+  id = id, 
+  corstr = "exchangeable")
+summary(results_pidi2_kids_k)
+anova_kids_k <- anova(results_pidi2_kids_k)
+anova_kids_k
+
+results_pidi2_kids_nk <- geeglm(
+  inf_yes ~ age_exact, 
+  data = pidi2_kids_noknowledge, 
+  family = binomial(logit), 
+  id = id, 
+  corstr = "exchangeable")
+summary(results_pidi2_kids_nk)
+anova_kids_nk <- anova(results_pidi2_kids_nk)
+anova_kids_nk
+```
+
+
+```{r}
+pidi2_inference_reduced %>% 
+ dplyr::group_by(condition, age_year) %>%
+ dplyr::summarize(inf_yes = mean(inf_yes_avg))
+
+pidi2_inference_reduced %>% 
+  dplyr::filter(age_year != "35") %>% 
+  dplyr::group_by(condition) %>%
+  dplyr::summarize(inf_yes = mean(inf_yes_avg))
+```
+
+```{r}
+Y_bar = mean(results_pidi2$y, na.rm = T)
+rsquare_gee <- log(1-(sum(results_pidi2$weights * (results_pidi2$y - results_pidi2$fitted.values)^2, na.rm = T))/log(sum(results_pidi2$weights*(results_pidi2$y - Y_bar)^2, na.rm = T)))
+
+PseudoR2(results_pidi2, "McFadden")
+```
+
+
