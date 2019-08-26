@@ -1,24 +1,24 @@
-# Filtering out just one row each for response average for both stimulus types 
+# Filtering out just one row each for response average for both group types 
 expt1_test_child_plot <- expt1_test_child %>%
-  distinct(id, stimulus, .keep_all = TRUE) %>% 
+  distinct(id, group, .keep_all = TRUE) %>% 
   filter(!is.na(age_exact))
 
 expt1_test_adult_plot <- expt1_test_adult %>%
-  distinct(id, stimulus, .keep_all = TRUE) 
+  distinct(id, group, .keep_all = TRUE) 
 
 # Plotting proportion of trials participants extend 
 # property to members of mentioned and unmentioned groups
 expt1_plot_prop_extension <- ggplot() + 
   facet_wrap (
-    . ~ subjectGroup,
+    . ~ condition,
     labeller = as_labeller(c(`generic` = "Generic", `specific` = "Specific"))
   ) +
   geom_point(
     data = expt1_test_child_plot,
     aes(x = age_exact,
         y = response_avg,
-        color = stimulus,
-        shape = stimulus),
+        color = group,
+        shape = group),
     position = position_jitter(w = 0, h = 0.02),
     size = 1,
     alpha = .5,
@@ -28,15 +28,15 @@ expt1_plot_prop_extension <- ggplot() +
     data = expt1_test_child_gee,
     aes(x = age_exact,
         y = response,
-        color = stimulus,
-        fill = stimulus),
+        color = group,
+        fill = group),
     method = "lm") + 
   geom_point(
     data = expt1_test_adult_plot,
     aes(x = as.numeric(as.character(age_categorical)),
         y = response_avg,
-        color = stimulus,
-        shape = stimulus),
+        color = group,
+        shape = group),
     position = position_jitter(w = 0.2, h = 0.02),
     size = 1,
     alpha = .5,
@@ -53,8 +53,8 @@ expt1_plot_prop_extension <- ggplot() +
     data = expt1_test_summary_adult,
     aes(y = response,
         x = as.numeric(as.character(age_categorical)),
-        fill = stimulus,
-        shape = stimulus),
+        fill = group,
+        shape = group),
     color = "black",
     size = 7
   ) +
@@ -66,44 +66,43 @@ expt1_plot_prop_extension <- ggplot() +
   ) +
   coord_cartesian(ylim=c(-.05, 1.05)
   ) + 
-  theme(text         = element_text(size = 15),
-        axis.title.x = element_text(size = 15, 
-                                    face = "bold",
+  theme(text         = element_text(size = 14),
+        axis.title.x = element_text(size = 14, 
                                     margin = margin(t = 20, r = 0, b = 0, l = 0)),
-        axis.title.y = element_text(size = 15, 
-                                    face = "bold",
+        axis.title.y = element_text(size = 14, 
                                     margin = margin(t = 0, r = 20, b = 0, l = 0)),
-        axis.text = element_text(size = 15), 
-        strip.text = element_text(size = 15),
+        axis.text = element_text(size = 14), 
+        strip.text = element_text(size = 14),
         strip.background = element_blank(),
         panel.border = element_rect(color = "black", fill = NA),
         panel.background = element_rect(fill = NA),
-        legend.direction = "horizontal",
-        legend.position = "bottom"
+        legend.title = element_text(size = 13)
+        # legend.direction = "horizontal",
+        # legend.position = "bottom"
   ) +
   labs(x = "Age",
-       y = "Proportion of trials"
+       y = "Prop. of trials participants\nextended target property"
   ) +
   scale_shape_manual(name = "Group membership",
-                     labels = c("Unmentioned", "Previously mentioned"), 
-                     values = c(21,22)
+                     labels = c("Mentioned", "Unmentioned"), 
+                     values = c(22,21)
   ) + 
   scale_color_manual(name = "Group membership",
-                     labels = c("Unmentioned", "Previously mentioned"),
-                     values = c("#58b947", "#d9be00")
+                     labels = c("Mentioned","Unmentioned"),
+                     values = c("#d9be00", "#58b947")
   ) +
   scale_fill_manual(name = "Group membership",
-                    labels = c("Unmentioned", "Previously mentioned"), 
-                    values = c("#58b947", "#d9be00")
+                    labels = c("Mentioned","Unmentioned"),
+                    values = c("#d9be00", "#58b947")
   ) +
-  guides(fill = guide_legend(reverse = TRUE,
+  guides(fill = guide_legend(
                              title.position = "top",
                              title.hjust = 0.5),
-         shape = guide_legend(reverse = TRUE,
+         shape = guide_legend(
                               title.position = "top",
                               title.hjust = 0.5),
-         color = guide_legend(override.aes = list(fill = c("#d9be00", "#58b947")),
-                              reverse = TRUE,
+         color = guide_legend(
+           # override.aes = list(fill = c("#58b947", "#d9be00")),
                               title.position = "top",
                               title.hjust = 0.5)
   ) 

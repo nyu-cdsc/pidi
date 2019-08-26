@@ -1,29 +1,25 @@
 # creating dataframe with just the test trials, removing some unneeded columns
 expt1_test <- expt1 %>%
-  filter(trialType == "test") %>%
-  select(-trialType, -attn_correct, -attn_correct_sum, -stim1) 
+  filter(trial_type == "test") %>%
+  select(-trial_type, -trial) 
 
-# making sure our variables are in the correct formats
-expt1_test$age_categorical <- as.factor(expt1_test$age_categorical)
-expt1_test$stimulus <- as.factor(expt1_test$stimulus)
-expt1_test$subjectGroup <- as.factor(expt1_test$subjectGroup)
-expt1_test$response <- as.numeric(expt1_test$response)
-expt1_test$property <- as.factor(expt1_test$property)
+expt1_test$age_categorical <- as.factor(as.character(expt1_test$age_categorical))
 
 # Computing average response across stimulus type (whether it was previously mentioned
 # or unmentioned)
+# We will use this for graphing later on
 expt1_test <- expt1_test %>%
-  group_by(id, stimulus) %>%
+  group_by(id, group) %>%
   mutate(response_avg = mean(response))
+
+expt1_test$new_id <- cumsum(!duplicated(expt1_test$id))
 
 # Creating another data frame where we compare trial by trial if participants
 # responded "yes" for mentioned group and "no" for previously unmentioned group
 expt1_inference <- expt1_test %>%
-  select(-orderPres, -response_avg) %>%
-  tidyr::spread(value = response, key = stimulus) %>% 
-  dplyr::mutate(same = as.numeric(same),
-                opposite = as.numeric(opposite)) %>%
-  dplyr::mutate(inf = ifelse(same == 1 & opposite == 0, 1, 0)) %>% 
+  select(-trial_order, -response_avg, -response_as_string) %>%
+  tidyr::spread(value = response, key = group) %>% 
+  dplyr::mutate(inf = ifelse(mentioned == 1 & unmentioned == 0, 1, 0)) %>%
   dplyr::group_by(id) %>% 
   dplyr::mutate(inf_avg = mean(inf))
 
@@ -42,4 +38,3 @@ expt1_inference_child <- expt1_inference %>%
 
 expt1_inference_adult <- expt1_inference %>%
   filter(startsWith(id, "A"))
-
