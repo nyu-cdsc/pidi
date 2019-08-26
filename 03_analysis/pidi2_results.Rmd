@@ -1,0 +1,106 @@
+---
+title: "Children's inferences about unmentioned groups from generic statements - Study 2"
+author: "Kelsey Moty"
+date: "August 16, 2019"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Loading in relevant libraries and packages
+library(Rmisc) # for summarySE function
+library(tidyverse) # for basically everything
+library(here) # for loading in our data
+library(geepack) # for GEE analyses in Study 1 - 3
+library(lubridate) # for computing ages
+library(emmeans) # for marginal means and slopes
+library(lme4)
+library(interactions) # for Johnson-Neyman plots
+library(cowplot) # plotting
+library(ggpubr) # plotting
+```
+
+```{r import_expt2, include=FALSE}
+ # Importing Study 2 data 
+expt2 <- read_csv(here::here("02_experiment", "expt2", "data", "expt2_allparticipants.csv"),
+                   col_types = cols(.default = "c",
+                                    dot = "D",
+                                    response = "d",
+                                    condition = "f",
+                                    group = "f",
+                                    trial_order = "d",
+                                    age_exact = "d",
+                                    age_year = "d",
+                                    age_categorical = "f",
+                                    hispanic = "d"))
+``` 
+
+
+```{r drop_expt2, include=FALSE} 
+ # dropping participants 
+ # Criterion for dropping participants: 
+ # No children were excluded for manipulation checks 
+ # Children were excluded for not correctly responding to control trials in pragmatic task 
+ source(here::here("03_analysis", "expt2", "code", "pidi2_drop_participants.R")) 
+``` 
+
+```{r get_test_trials_expt2, include=FALSE}
+# Getting data from test trials into its own dataframe
+# Several data frames will be made:
+# expt2_test = test trials with responses trial by trial
+# expt2_inference = if participants make inference trial by trial (yes to mentioned, no to un mentioned) 
+# finally, child and adult only versions of both of those dfs
+source(here::here("03_analysis", "expt2", "code", "pidi2_getting_data_from_test_trials.R"))
+```
+
+```{r analyses_expt2, include=FALSE}
+# Several binomial GEEs looking at:
+# This study only has child participants
+# number of trials participant extend property to each group
+source(here::here("03_analysis", "expt2", "code", "pidi2_binomial_gee.R"))
+
+# number of trials participants make expected inference
+source(here::here("03_analysis", "expt2", "code", "pidi2_binomial_gee_inf.R"))
+```
+
+```{r pformat, include=FALSE}
+# formatter for p values 
+source(here::here("03_analysis", "general", "pformat.R"))
+```
+
+**Property Extension.** We found the same pattern of results as in Study 1: Children were more likely to extend the target property to members of the previously mentioned group than the unmentioned group (Group: $\chi^2$(`r expt2_test_anova$Df[2]`) = `r round((expt2_test_anova$X2[2]),2)`, *p* `r pformat(expt2_test_anova[2,3])`), and they did so more frequently when they heard generic language over specific statements (Group x Condition ($\chi^2$(`r expt2_test_anova$Df[3]`) = `r round((expt2_test_anova$X2[3]),2)`, *p* `r pformat(expt2_test_anova[3,3])`, see Figure 4A). 
+
+
+```{r plot1_expt2, include=FALSE}
+source(here::here("03_analysis", "expt2", "code", "pidi2_plot_property_extension.R")) 
+
+expt2_plot_prop_extension
+```
+
+**Property Inference.** Next, we examined whether at the level of individual trials, children inferred that the target property was true of the mentioned group but not of the 
+unmentioned group. We found that children more frequently made this inference after hearing the property conveyed via a generic versus a specific statement ($\chi^2$(`r expt2_inference_anova$Df[1]`) = `r round((expt2_inference_anova$X2[1]),2)`, *p* `r pformat(expt2_inference_anova[1,3])`, see Figure 4B), thus, replicating the main finding of Study 1. 
+
+
+```{r plot2_expt2, include=FALSE}
+source(here::here("03_analysis", "expt2", "code", "pidi2_plot_inference.R")) 
+expt2_plot_inference
+```
+
+
+```{r, include=FALSE}
+expt2_figure <- ggdraw() +
+  draw_plot(expt2_plot_prop_extension, x = 0.015, y = 00, 
+              width = .57, height = 1) +
+  draw_plot(expt2_plot_inference, x = .585, y = 0, 
+            width = .415, height = 1) +
+  draw_plot_label(label = c("A", "B"), size = 15,
+                  x = c(0, .615), y = c(1, 1))
+```
+
+```{r}
+expt2_figure
+```
+
+*Figure 4.* (A) Proportion of trials that children extended the target property to individuals of the mentioned and unmentioned groups by condition. Error bars reflect 95% CIs. Small shapes reflect individual averages, and large shapes and lines reflect group averages. (B) Proportion of trials that children extended the target property to individuals of the mentioned and unmentioned groups by condition. 
+
+
