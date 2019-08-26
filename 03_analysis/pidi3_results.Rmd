@@ -1,0 +1,209 @@
+---
+title: "Children's inferences about unmentioned groups from generic statements - Study 3"
+author: "Kelsey Moty"
+date: "August 21, 2019"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Loading in relevant libraries and packages
+library(Rmisc) # for summarySE function
+library(tidyverse) # for basically everything
+library(here) # for loading in our data
+library(geepack) # for GEE analyses in Study 1 - 3
+library(lubridate) # for computing ages
+library(emmeans)
+library(lme4)
+library(interactions) # for Johnson-Neyman plots
+library(cowplot)
+library(ggpubr)
+```
+
+```{r import_expt3, include=FALSE}
+# Importing Study 3 data 
+expt3 <- read_csv(here::here("02_experiment", "expt3", "data", "expt3_allparticipants.csv"),
+                   col_types = cols(.default = "c",
+                                    dot = "D",
+                                    response = "d",
+                                    condition = "f",
+                                    group = "f",
+                                    trial_order = "d",
+                                    age_exact = "d",
+                                    age_year = "d",
+                                    age_categorical = "f",
+                                    hispanic = "d"))
+
+``` 
+
+```{r drop_expt3, include=FALSE} 
+ # dropping participants 
+ # Criterion for dropping participants: 
+ # No children were excluded for manipulation checks 
+ # Children were excluded for not correctly responding to control trials in pragmatic task 
+  source(here::here("03_analysis", "expt3", "code", "pidi3_drop_participants.R")) 
+``` 
+
+```{r get_test_trials_expt3, include=FALSE}
+# Getting data from test trials into its own dataframe
+# Several data frames will be made:
+# expt3_test = test trials with responses trial by trial
+# expt3_inference = if participants make inference trial by trial (yes to mentioned, no to un mentioned) 
+# finally, child and adult only versions of both of those dfs
+source(here::here("03_analysis", "expt3", "code", "pidi3_getting_data_from_test_trials.R"))
+```
+
+```{r analyses_expt3, include=FALSE}
+# Several binomial GEEs looking at:
+# number of trials participant extend property to each group (adults and kids)
+source(here::here("03_analysis", "expt3", "code", "pidi3_binomial_gee.R"))
+
+# number of trials participant extend property to each group (kids)
+source(here::here("03_analysis", "expt3", "code", "pidi3_binomial_gee_child.R"))
+
+# number of trials participants make expected inference (adults and kids)
+source(here::here("03_analysis", "expt3", "code", "pidi3_binomial_gee_inf.R"))
+
+# number of trials participants make expected inference (kids only)
+source(here::here("03_analysis", "expt3", "code", "pidi3_binomial_gee_inf_child.R"))
+```
+
+```{r pformat, include=FALSE}
+# formatter for p values 
+source(here::here("03_analysis", "general", "pformat.R"))
+```
+
+
+**Property Extension.** Following the same analysis strategy described in Study 1, we first examined the likelihood of extending the target property (i.e., responding "yes") to other individuals as a function of the individual's group membership (from previously mentioned or unmentioned group), participant's age, and condition (whether the speaker was knowledgeable or unknowledgeable). Children and adults were more likely to extend the target property to members of the previously mentioned group ($\chi^2$(`r expt3_test_anova$Df[3]`) = `r round((expt3_test_anova$X2[3]),2)`, *p* `r pformat(expt3_test_anova[3,3])`). Critically, their tendency to do so depended on the speaker's knowledge of two groups (Group x Condition: $\chi^2$(`r expt3_test_anova$Df[5]`) = `r round((expt3_test_anova$X2[5]),2)`, *p* `r pformat(expt3_test_anova[5,3])`) and the participant's age (Age x Group: $\chi^2$(`r expt3_test_anova$Df[6]`) = `r round((expt3_test_anova$X2[6]),2)`, *p* `r pformat(expt3_test_anova[6,3])`; Age x Condition: $\chi^2$(`r expt3_test_anova$Df[4]`) = `r round((expt3_test_anova$X2[4]),2)`, *p* `r pformat(expt3_test_anova[4,3])`; Age x Group x Condition: $\chi^2$(`r expt3_test_anova$Df[7]`) = `r round((expt3_test_anova$X2[7]),2)`, *p* `r pformat(expt3_test_anova[7,3])`, see Figure 7). Across all four age groups, children and adults were more likely to infer that target property was not true of individuals from the unmentioned group after hearing generics from a knowledgeable speaker compared to when they heard the exact same generic statement made by an unknowledgeable speaker (Group x Condition: 4s: $\chi^2$(`r expt3_test4_anova$Df[3]`) = `r round((expt3_test4_anova$X2[3]),2)`, *p* `r pformat(expt3_test4_anova[3,3])`, 5s: $\chi^2$(`r expt3_test5_anova$Df[3]`) = `r round((expt3_test5_anova$X2[3]),2)`, *p* `r pformat(expt3_test5_anova[3,3])`; 6s: $\chi^2$(`r expt3_test6_anova$Df[3]`) = `r round((expt3_test6_anova$X2[3]),2)`, *p* `r pformat(expt3_test6_anova[3,3])`; adults: $\chi^2$(`r expt3_testadult_anova$Df[3]`) = `r round((expt3_testadult_anova$X2[3]),2)`, *p* `r pformat(expt3_testadult_anova[3,3])`). 
+```{r}
+
+```
+
+  We find the same pattern of results when looking at children's responses only (these analyses used children's exact age as continuous variable). Children inferred that the target property was true of individuals of the previously mentioned group but not true of individuals from the unmentioned group-but they did so only when the speaker was knowledgeable and the tendency to do increased with age (Age x Condition x Group: $\chi^2$(`r expt3_test_child_anova$Df[7]`) = `r round((expt3_test_child_anova$X2[7]),2)`, *p* `r pformat(expt3_test_child_anova[7,3])`). With age, children were less likely to extend the target property to members of the unmentioned group after hearing generic language from a knowledgeable speaker ($\beta$ = `r round(expt3_test_child_emtrends$age_exact.trend[1], 2)`, 95% CI [`r round(expt3_test_child_emtrends$asymp.LCL[1], 2)`, `r round(expt3_test_child_emtrends$asymp.UCL[1], 2)`])]), but not after hearing a generic from an unknowledgeable speaker ($\beta$ = `r round(expt3_test_child_emtrends$age_exact.trend[2], 2)`, 95% CI [`r round(expt3_test_child_emtrends$asymp.LCL[2], 2)`, `r round(expt3_test_child_emtrends$asymp.UCL[2], 2)`]). Critically, by `r round(as.numeric(expt3_test_jn_unmentioned_value), 1)` years of age (determined using the Johnson-Neyman technique, Johnson & Fay, 1950), children extended the target property to members of the unmentioned group less often after hearing a generic from a knowledgeable speaker than an unknowledgeable speaker. 
+
+```{r}
+
+```
+
+**Property Inference.** Next, looking at the inferences that participants made for a given target property (i.e., infer that the mentioned group has the property but that the unmentioned does not), children and adults were more likely to make the expected inference when the generic was communicated by a knowledgeable speaker than an unknowledgeable speaker (Condition: $\chi^2$(`r expt3_inference_anova$Df[1]`) = `r round((expt3_inference_anova$X2[1]),2)`, *p* `r pformat(expt3_inference_anova[1,3])`, see Figure 8). The tendency to make this kind of inference increased with age (Age: $\chi^2$(`r expt3_inference_anova$Df[2]`) = `r round((expt3_inference_anova$X2[2]),2)`, *p* `r pformat(expt3_inference_anova[2,3])`). While we did not find an interaction between age (when treated categorically) and condition with the adult data included in the model (Age x Condition: $\chi^2$(`r expt3_inference_anova$Df[3]`) = `r round((expt3_inference_anova$X2[3]),2)`, *p* `r pformat(expt3_inference_anova[3,3])`), we do see this interaction between age and condition when examining the child data alone (here, age treated continuously). By `r round(as.numeric(gsub("Higher", "", expt3_inference_child_jn$jn[[1]]$bounds[2])), 1)` years of age (determined using the Johnson-Neyman procedure, see Figure 9; Johnson & Fay, 1950), children are more likely to infer that properties conveyed via generics are not true of unmentioned groups when the generic is made by a knowledgeable speaker-but children do not make this inference when the generic is made by an unknowledgeable speaker (Age x Condition: $\chi^2$(`r expt3_inference_child_anova$Df[3]`) = `r round((expt3_inference_child_anova$X2[3]),2)`, *p* `r pformat(expt3_inference_child_anova[3,3])`). The tendency to only make inferences about unmentioned groups from generics when conveyed by knowledgeable speakers increases with age ($\beta$ = `r round(expt3_inf_child_emtrends$age_exact.trend[1], 2)`, 95% CI [`r round(expt3_inf_child_emtrends$asymp.LCL[1], 2)`, `r round(expt3_inf_child_emtrends$asymp.UCL[1], 2)`]). 
+
+
+
+```{r, include=FALSE}
+expt3_test_summary_adult = summarySEwithin(data = expt3_test_adult,
+                                           measurevar = "response",
+                                           betweenvars = c("condition",
+                                                           "age_categorical"),
+                                           withinvars = "group")
+
+expt3_inference_adult <- expt3_inference %>% 
+  filter(age_exact >= 18)
+
+expt3_inference_summary_adult = summarySE(data = expt3_inference_adult,
+                                          measurevar = "inf",
+                                          groupvars = c("condition",
+                                                        "age_categorical"))
+```
+
+```{r, include=FALSE}
+# Johnson-Neyman plot
+expt3_jn_inference_plot <- 
+  expt3_jnplot + 
+  theme(legend.position = c(.8,.15)) +
+  guides(linetype = FALSE) + 
+  labs(x = "Age",
+       y = "Simple slope of condition\npredicting expected inference") + 
+  geom_segment(aes(x = (as.numeric(expt3_jn_value) + .6),
+                        y = 4,
+                        xend = (as.numeric(expt3_jn_value) + .1),
+                        yend = 4),
+                    colour = 'black',
+                    size = .5,
+                    arrow = arrow(length = unit(0.3, "cm")))+
+  annotate("label", 
+           x = (as.numeric(expt3_jn_value) + 1), 
+           y = 4, 
+           label = paste(round(as.numeric(expt3_jn_value), 1), "years"),
+           label.padding = unit(0.55, "lines"),
+           fontface = "bold") 
+
+expt3_jn_test_plot_unmentioned <- 
+  expt3_jn_unmentioned$plot + 
+  labs(x = "Age",
+       y = "",
+       title = "Unmentioned group") + 
+  theme(legend.position = "none",
+        plot.title = element_text(face = "plain"),
+        axis.title = element_text(size = 14)) +
+  scale_y_continuous(
+    limits = c(-5,2.5),
+    breaks = c(-4, -2, 0, 2)) +
+  guides(linetype = FALSE) + 
+  geom_segment(aes(x = (as.numeric(expt3_test_jn_unmentioned_value) + .6),
+                        y = 1.5,
+                        xend = (as.numeric(expt3_test_jn_unmentioned_value) + .2),
+                        yend = 1.5),
+                    colour = 'black',
+                    size = .5,
+                    arrow = arrow(length = unit(0.3, "cm")))+
+  annotate("label", 
+           x = (as.numeric(expt3_test_jn_unmentioned_value) + 1), 
+           y = 1.5, 
+           label = paste(round(as.numeric(expt3_test_jn_unmentioned_value), 1), "years"),
+           label.padding = unit(0.55, "lines"),
+           fontface = "bold") 
+
+
+expt3_jn_test_plot_mentioned <- 
+  expt3_jn_mentioned$plot + 
+  labs(x = "Age",
+       y = "Simple slope of condition\npredicting extension of property",
+       title = "Mentioned group") + 
+  scale_y_continuous(
+    limits = c(-5,2.5),
+    breaks = c(-4, -2, 0, 2)) +
+  theme(legend.position = c(.25,.15),
+        plot.title = element_text(face = "plain"),
+        axis.title = element_text(size = 14)) + 
+  guides(linetype = FALSE)  
+
+test3_plot <- ggdraw() +
+  draw_plot(expt3_jn_test_plot_unmentioned, x = 0.5, y = 0, width = .5, height = 1) + 
+  draw_plot(expt3_jn_test_plot_mentioned, x = 0, y = 0, width = .5, height = 1) 
+
+
+```
+
+
+```{r plot1_expt3, include=FALSE}
+# Plot plotting how many trials participants extend property to new individuals of mentioned and unmentioned group 
+source(here::here("03_analysis", "expt3", "code", "pidi3_plot_property_extension.R")) 
+```
+
+```{r, include=FALSE}
+expt3_test_figure <- ggdraw() +
+  draw_plot(expt3_plot_prop_extension, x = 0.025, y = .525, 
+            width = .975, height = .475) +
+  draw_plot(test3_plot, x = 0.025, y = 0, 
+            width = .975, height = .475) + 
+  draw_plot_label(label = c("A", "B"), size = 15,
+                  x = c(0, 0), y = c(1, 0.5))
+```
+
+
+```{r plot2_expt3, include=FALSE}
+# Plot plotting how many trials participants make expected inference (yes to mentioned and no to unmentioned) 
+source(here::here("03_analysis", "expt3", "code", "pidi3_plot_inference.R")) 
+
+```
+
+```{r, include=FALSE}
+expt3_inference_figure <- ggdraw() +
+  draw_plot(expt3_plot_inference, x = 0.015, y = 00, 
+              width = .57, height = 1) +
+  draw_plot(expt3_jn_inference_plot, x = .585, y = 0, 
+            width = .415, height = 1) +
+  draw_plot_label(label = c("A", "B"), size = 15,
+                  x = c(0, .615), y = c(1, 1))
+```
+
