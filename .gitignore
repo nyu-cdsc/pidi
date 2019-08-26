@@ -1,8 +1,14 @@
 # Don't track content of these folders
 01_docs/
-02_experiment/
+adults/
+children*/
+testable*/
+resources/
 datavyu_files/
 other_code/
+
+pidi*.csv
+readme.txt
 
 *.html
 *.Rhistory
