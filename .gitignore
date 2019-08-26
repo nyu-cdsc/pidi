@@ -1,0 +1,9 @@
+# Don't track content of these folders
+01_docs/
+02_experiment/
+datavyu_files/
+other_code/
+
+*.html
+*.Rhistory
+*.docx
