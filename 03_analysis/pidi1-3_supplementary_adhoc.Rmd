@@ -1,0 +1,167 @@
+---
+title: "Context-dependent pragmatics task"
+author: "Kelsey Moty"
+date: "August 26, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Loading in relevant libraries and packages
+library(Rmisc) # for summarySE function
+library(tidyverse) # for basically everything
+library(here) # for loading in our data
+library(lme4) 
+library(car)
+library(cowplot) # plotting
+library(ggpubr)
+```
+
+```{r import_expt1, include=FALSE}
+# Importing Study 1 data 
+expt1 <- read_csv(here::here("02_experiment", "expt1", "data", "expt1_allparticipants.csv"),
+                   col_types = cols(.default = "c",
+                                    dot = "D",
+                                    response = "d",
+                                    condition = "f",
+                                    group = "f",
+                                    trial_order = "d",
+                                    age_exact = "d",
+                                    age_year = "d",
+                                    age_categorical = "f",
+                                    hispanic = "d"))
+```
+
+```{r drop_expt1, include=FALSE}
+# dropping participants
+# Criterion for dropping participants:
+# Adult participants who didn't pass the audio checks
+# Adult participants who failed both attention checks
+# No children were excluded for manipulation checks
+# Adults and children were excluded for not correctly responding to control trials in pragmatic task
+source(here::here("03_analysis", "expt1", "code", "pidi1_drop_participants.R"))
+```
+
+```{r get_adhoc1, include=FALSE}
+# getting adhoc trials
+source(here::here("03_analysis", "expt1", "code", "pidi1_adhoc_getting_trials.R"))
+```
+
+```{r analysis1, include=FALSE}
+# analyses
+source(here::here("03_analysis", "expt1", "code", "pidi1_adhoc_anova.R"))
+```
+
+```{r plot1, include=FALSE}
+source(here::here("03_analysis", "expt1", "code", "pidi1_adhoc_plot.R"))
+```
+
+```{r import_expt2, include=FALSE}
+# Importing Study 1 data 
+expt2 <- read_csv(here::here("02_experiment", "expt2", "data", "expt2_allparticipants.csv"),
+                   col_types = cols(.default = "c",
+                                    dot = "D",
+                                    response = "d",
+                                    condition = "f",
+                                    group = "f",
+                                    trial_order = "d",
+                                    age_exact = "d",
+                                    age_year = "d",
+                                    age_categorical = "f",
+                                    hispanic = "d"))
+```
+
+```{r drop_expt2, include=FALSE}
+# dropping participants
+# Criterion for dropping participants:
+# Adult participants who didn't pass the audio checks
+# Adult participants who failed both attention checks
+# No children were excluded for manipulation checks
+# Adults and children were excluded for not correctly responding to control trials in pragmatic task
+source(here::here("03_analysis", "expt2", "code", "pidi2_drop_participants.R"))
+```
+
+```{r get_adhoc2, include=FALSE}
+# getting adhoc trials
+source(here::here("03_analysis", "expt2", "code", "pidi2_adhoc_getting_trials.R"))
+```
+
+```{r analysis2, include=FALSE}
+# analyses
+source(here::here("03_analysis", "expt2", "code", "pidi2_adhoc_anova.R"))
+```
+
+```{r plot2, include=FALSE}
+source(here::here("03_analysis", "expt2", "code", "pidi2_adhoc_plot.R"))
+```
+
+```{r import_expt3, include=FALSE}
+# Importing Study 3 data 
+expt3 <- read_csv(here::here("02_experiment", "expt3", "data", "expt3_allparticipants.csv"),
+                   col_types = cols(.default = "c",
+                                    dot = "D",
+                                    response = "d",
+                                    condition = "f",
+                                    group = "f",
+                                    trial_order = "d",
+                                    age_exact = "d",
+                                    age_year = "d",
+                                    age_categorical = "f",
+                                    hispanic = "d"))
+
+```
+
+```{r drop_expt3, include=FALSE} 
+ # dropping participants 
+ # Criterion for dropping participants: 
+ # No children were excluded for manipulation checks 
+ # Children were excluded for not correctly responding to control trials in pragmatic task 
+  source(here::here("03_analysis", "expt3", "code", "pidi3_drop_participants.R")) 
+``` 
+
+```{r get_adhoc3, include=FALSE}
+# getting adhoc trials
+source(here::here("03_analysis", "expt3", "code", "pidi3_adhoc_getting_trials.R"))
+```
+
+```{r analysis3, include=FALSE}
+# analyses
+source(here::here("03_analysis", "expt3", "code", "pidi3_adhoc_anova.R"))
+```
+
+```{r plot3, include=FALSE}
+source(here::here("03_analysis", "expt3", "code", "pidi3_adhoc_plot.R"))
+```
+
+
+After completing the novel-category inference task, participants completed the context-dependent pragmatic task (also referred to as ad-hoc implicature) used by Stiller,  Goodman, and Frank (2015). In each test trial, participants were shown three items (e.g., a house with a flower and tree outside, a house with a flower outside, and a house with neither a flower nor tree) and were asked to select one of the items based on the narrator's description (e.g., "My house has a flower outside"). If participants reason literally about the narrator's description, they should select at chance between the 2-feature (e.g., the house with the tree and flower) and 1-feature (e.g., the house with just the flower) items. However, if participants reason pragmatically about the narrator's description (i.e., consider the broader linguistic and social context of the statement), they should select the 1-feature item (e.g., the house with just the flower) above chance. We included the context-dependent pragmatic ability task to make sure that our testing environment (using animations on a screen) could successfully elicit pragmatic reasoning.
+
+In Study 1, we found that performance on this task was near ceiling across all four age groups (4s: `r round(expt1_adhoc_test_by_age$pragmatic_yes[expt1_adhoc_test_by_age$age_categorical == 4], 2)`, 5s: `r round(expt1_adhoc_test_by_age$pragmatic_yes[expt1_adhoc_test_by_age$age_categorical == 5], 2)`, 6s: `r round(expt1_adhoc_test_by_age$pragmatic_yes[expt1_adhoc_test_by_age$age_categorical == 6], 2)`, Adults: `r round(expt1_adhoc_test_by_age$pragmatic_yes[expt1_adhoc_test_by_age$age_categorical == 8], 2)` ). Critically, while performance on this task was dependent on age (Age: $\chi^2$(`r adhoc_anova$Df[1]`) = `r round(adhoc_anova[1,1], 1)`, *p* = `r round(adhoc_anova[1,3], 3)`), children across all age-groups performed above chance on this task (chance was equal to 50% for this analysis, see Figure 1A). Performance on this task was not different across participants assigned in either of the two conditions in the main category inference task (Condition: $\chi^2$(`r adhoc_anova$Df[2]`) = `r round(adhoc_anova[2,1], 1)`, *p* = `r round(adhoc_anova[2,3], 3)`).
+
+We find a similar patterns of results when looking at children who participated in Study 2 (Age: $\chi^2$(`r adhoc2_anova_child$Df[1]`) = `r round(adhoc2_anova_child[1,1], 2)`, *p* = `r round(adhoc2_anova_child[1,3], 3)`, Figure 1B) and Study 3 (Age: $\chi^2$(`r adhoc3_anova_child$Df[1]`) = `r round(adhoc3_anova_child[1,1], 2)`, *p* = `r round(adhoc3_anova_child[1,3], 3)`, Figure 1C). 
+
+
+```{r figure, echo=FALSE}
+plot_prag <- ggdraw() + 
+  draw_plot(prag_by_age + theme(axis.title=element_blank()), x = 0.08, y = 0.05, 
+              width = .33, height = .95) +
+  draw_plot(prag2_by_age + theme(axis.title=element_blank()), x = .415, y = 0.05, 
+            width = .3, height = .95) +
+  draw_plot(prag3_by_age + theme(axis.title=element_blank()), x = .715, y = 0.05, 
+          width = .3, height = .95) +
+  draw_plot_label(label = c("A", "B", "C"), size = 15,
+                  x = c(0.08, .415, .715), y = c(1, 1, 1)) + 
+  draw_label("Age", x=0.5, y=  0, vjust=-0.5, angle= 0) +
+  draw_label("Proportion of trials participants\nselected the pragmatic option", 
+             x = 0, y = 0.5, vjust = 1.5, angle = 90) + 
+  draw_plot_label(label = c("Study 1", "Study 2", "Study 3"), size = 15,
+                  x = c(0.11, .445, .745), y = c(1, 1, 1)) 
+
+plot_prag
+```
+
+*Figure 1.* Proportion of trials that participants selected the pragmatic option (over the literal or neither response). Line reflects a Loess line of the average response across child participants, and the large shape reflects group average across adult participants. Error band and bars reflect 95% CIs. Small shapes reflect individual averages. Data from Study 1 (A), Study 2 (B), and Study 3 (C).
+
+
+
