@@ -1,0 +1,85 @@
+---
+title: "Study 1 Pre-registered Sample"
+author: "Kelsey Moty"
+date: "August 26, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Loading in relevant libraries and packages
+library(Rmisc) # for summarySE function
+library(tidyverse) # for basically everything
+library(here) # for loading in our data
+library(geepack) # for GEE analyses in Study 1 - 3
+library(lubridate) # for computing ages
+library(emmeans) # getting marginal means and slopes
+library(lme4) 
+library(interactions) # for Johnson-Neyman plots
+library(cowplot) # plotting
+library(ggpubr) # plotting
+```
+
+```{r}
+# Importing Study 1 data 
+expt1 <- read_csv(here::here("02_experiment", "expt1", "data", "expt1_allparticipants.csv"),
+                   col_types = cols(.default = "c",
+                                    dot = "D",
+                                    response = "d",
+                                    condition = "f",
+                                    group = "f",
+                                    trial_order = "d",
+                                    age_exact = "d",
+                                    age_year = "d",
+                                    age_categorical = "f",
+                                    hispanic = "d"))
+```
+
+```{r drop_expt1, include=FALSE}
+# dropping participants
+# Criterion for dropping participants:
+# Adult participants who didn't pass the audio checks
+# Adult participants who failed both attention checks
+# No children were excluded for manipulation checks
+# Adults and children were excluded for not correctly responding to control trials in pragmatic task
+source(here::here("03_analysis", "expt1", "code", "pidi1_prereg_drop_participants.R"))
+```
+
+```{r get_test_trials_expt1, include=FALSE}
+# Getting data from test trials into its own dataframe
+# Several data frames will be made:
+# expt1_test = test trials with responses trial by trial
+# expt1_inference = if participants make inference trial by trial (yes to mentioned, no to un mentioned) 
+# finally, child and adult only versions of both of those dfs
+source(here::here("03_analysis", "expt1", "code", "pidi1_prereg_getting_data_from_test_trials.R"))
+```
+
+```{r pformat, include=FALSE}
+# formatter for p values 
+source(here::here("03_analysis", "general", "pformat.R"))
+```
+
+```{r analyses_expt1, include=FALSE, warning=FALSE}
+# Several binomial GEEs looking at:
+# adult and child data looking at number of trials participant extend property to each group
+source(here::here("03_analysis", "expt1", "code", "pidi1_prereg_binomial_gee.R"))
+
+# only child data; nuber of trial participants extend property
+source(here::here("03_analysis", "expt1", "code", "pidi1_prereg_binomial_gee_child.R"))
+
+# adult and child data at number of trials participants make expected inference
+source(here::here("03_analysis", "expt1", "code", "pidi1_binomial_gee_inf.R"))
+
+# only child data for number of trials participants make expected inference
+source(here::here("03_analysis", "expt1", "code", "pidi1_binomial_gee_inf_child.R"))
+```
+
+  In our pre-registration, we originally intended to exclude children for 3 reasons: 1) for having incomplete data (i.e., not completing all 8 test trials on novel-category inference task), 2) failing to correctly respond to attention checks during the context-dependent pragmatic task (e.g.,, failing to select the correct fruit when the narrator stated she wanted "to eat some grapes"), and 3) failing to correctly identify the Zarpie and Gorp the second time we checked for category knowledge. 
+  
+  In the analyses listed in the main paper, we excluded children based on the first and second criterion but included children even if they failed the third. We decided on this because overall accuracy was high for these knowledge checks (M = 91%; only 5 children answered both questions incorrectly). In the analyses listed below, we follow our pre-registration precisely, using all three exclusion criteria listed above and including only the first 180 children who participant (consistent with our pre-registered planned sample).
+
+**Property Extension.** We first examined the likelihood of extending the target property (i.e., responding "yes") to other individuals as a function of the individual's group membership (from previously mentioned or unmentioned group), participant's age, and language condition (Generic or Specific). In this smaller sample, we find the same pattern of participants extending the target property more to members of the previously mentioned kind than the unmentioned kind  (Group: $\chi^2$(`r expt1_first_180_test_anova$Df[3]`) = `r round((expt1_first_180_test_anova$X2[3]),2)`, *p* `r pformat(expt1_first_180_test_anova[3,3])`), but the tendency to do so varied by the language participants heard (Group x Condition: $\chi^2$(`r expt1_first_180_test_anova$Df[5]`) = `r round((expt1_first_180_test_anova$X2[5]),2)`, *p* `r pformat(expt1_first_180_test_anova[5,3])`) and, to some degree, age (Age x Group: $\chi^2$(`r expt1_first_180_test_anova$Df[6]`) = `r round((expt1_first_180_test_anova$X2[6]),2)`, *p* `r pformat(expt1_first_180_test_anova[6,3])`, see Figure 2). Thus, the critical finding that children infer meaning about unmentioned groups from generic (but not specific) claims was replicated using this stricter exclusion criteria.
+
+However, analyses on this smaller sample suggests a somewhat different developmental trajectory. The analyses with the full sample provided evidence that these inferences emerge early but become more robust with age (Age x Condition x Group: ). In contrast, analyses with the smaller sample suggests that these inferences emerge early and robustly, as indicated by the lack of three-way interaction between condition, age, and group, both when we examined child and adult data together ($\chi^2$(`r expt1_first_180_test_anova$Df[7]`) = `r round((expt1_first_180_test_anova$X2[7]),2)`, *p* `r pformat(expt1_first_180_test_anova[7,3])`, age treated categorically) and when we examined the child data alone ($\chi^2$(`r expt1_first_180_test_child_anova$Df[7]`) = `r round((expt1_first_180_test_child_anova$X2[7]),2)`, *p* `r pformat(expt1_first_180_test_child_anova[7,3])`, age treated continuously). Children in our smaller sample (compared to the full sample) less frequently extended the target property to the unmentioned group after hearing a generic statement, but this difference was most prominent in our youngest participants (4s: 20% vs 32% of trials, 5s: 13% vs 19%, 6s: 13% vs 14%). Comparatively, we did not see this same decrease between children in our smaller sample (compared to the full sample) when looking at how often participants extended the target property to the unmentioned group after hearing a specific statement (4s: 42% vs 41% of trials, 5s: 37% vs 34%, 6s: 46% vs 42%)
+
