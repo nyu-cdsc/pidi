@@ -7,7 +7,8 @@
 # Sme kids didn't have a dob, so no exact age
 # omitted from analyses
 expt1_inference_child_gee <- expt1_inference_child %>%
-  filter(!is.na(age_exact))
+  filter(!is.na(age_exact))  %>% 
+  arrange(id)
 
 expt1_inference_child_results <- geeglm(
   inf ~ condition + age_exact + condition*age_exact, 

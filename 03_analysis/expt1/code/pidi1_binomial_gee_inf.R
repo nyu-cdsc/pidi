@@ -4,6 +4,9 @@
 # (1) age (categorical), 
 # (2) condition (generic/specific)
 
+expt1_inference <- expt1_inference %>% 
+  arrange(id)
+
 expt1_inference_results <- geeglm(
   inf ~ condition + age_categorical + condition*age_categorical, 
   data = expt1_inference, 

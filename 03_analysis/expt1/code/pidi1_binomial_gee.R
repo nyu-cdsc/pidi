@@ -3,6 +3,15 @@
 # (1) age (categorical), 
 # (2) condition (generic/specific), and 
 # (3) group type (mentioned/unmentioned) [within-subject]
+expt1_test <- expt1_test %>% 
+  arrange(id, trial_order)
+
+# GEE won't estimate because all adults responded "yes" for mentioned group
+# changing one response so that the model won't be singular
+expt1_test$response[expt1_test$id == "A12A5GVJX5RZC4" &
+                      expt1_test$property == "paint" &
+                      expt1_test$group == "mentioned"] <- 0
+
 
 expt1_test_results <- geeglm(
   response ~ condition + age_categorical + group + condition*age_categorical + 
@@ -28,12 +37,6 @@ expt1_test6 <- expt1_test %>%
 
 expt1_testadult <- expt1_test %>% 
   filter(age_categorical == "8")
-
-# GEE won't estimate because all adults responded "yes" for mentioned group
-# changing one response so that the model won't be singular
-expt1_testadult$response[expt1_testadult$id == "A12A5GVJX5RZC4" &
-                           expt1_testadult$property == "paint" &
-                           expt1_testadult$group == "mentioned"] <- 0
 
 
 expt1_test4_results <- geeglm(

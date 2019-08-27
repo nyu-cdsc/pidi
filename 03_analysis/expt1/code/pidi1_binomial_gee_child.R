@@ -8,7 +8,8 @@
 # Some kids don't have a dob, so no exact age
 # omitted from analyses
 expt1_test_child_gee <- expt1_test_child %>%
-  filter(!is.na(age_exact))
+  filter(!is.na(age_exact)) %>% 
+  arrange(id, trial_order)
 
 expt1_test_child_results <- geeglm(
   response ~ condition + age_exact + group + condition*age_exact + 
