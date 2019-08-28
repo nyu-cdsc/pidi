@@ -1,7 +1,5 @@
 ---
 title: "Children's inferences about unmentioned groups from generic statements - Study 2"
-author: "Kelsey Moty"
-date: "August 16, 2019"
 output: html_document
 ---
 ```{r setup, include=FALSE}

@@ -1,7 +1,5 @@
 ---
 title: "Study 1 Pre-registered Sample"
-author: "Kelsey Moty"
-date: "August 26, 2019"
 output: html_document
 ---
 

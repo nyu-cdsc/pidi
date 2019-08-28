@@ -1,7 +1,5 @@
 ---
 title: "Context-dependent pragmatics task"
-author: "Kelsey Moty"
-date: "August 26, 2019"
 output: html_document
 ---
 

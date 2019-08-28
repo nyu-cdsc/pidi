@@ -1,7 +1,5 @@
 ---
 title: "Children's inferences about unmentioned groups from generic statements - Study 1"
-author: "Kelsey Moty & Marjorie Rhodes"
-date: "May 2, 2019"
 output: word_document
 ---
 
