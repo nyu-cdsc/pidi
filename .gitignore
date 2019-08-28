@@ -8,6 +8,7 @@ datavyu_files/
 other_code/
 
 pidi*.csv
+!pidi1-3_data_dictionary.csv
 readme.txt
 
 *.html

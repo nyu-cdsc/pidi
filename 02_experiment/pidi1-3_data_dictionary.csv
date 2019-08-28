@@ -1,0 +1,18 @@
+variables,study,definition,codes,notes
+id,"1, 2, 3",participant id,," participants starting with A are adult participants recruited through Amazon mTurk; codes of E, P, or K refer to child participants recruited via schools"
+dot,"1, 2, 3",date of test,,
+trial,"1, 2, 3",name of stimuli shown,,
+response,"1, 2, 3",participant's responses,see response_as_string for definitions for numbers,
+response_as_string,"1, 2, 3",definitions for codes in response column,,
+trial_order,"1, 2, 3",order that participants saw each stimuli,,
+condition,"1, 2",Whether participants heard target property introduced via generic or specific statements,generic = Generic statements; specific = Specific statements,
+condition,3,Whether participants heard target property introduced via generic from a knowledgeable or unknowledgeable speaker,"knowledge = knowledgeable speaker, no knowledge = unknowledgeable speaker",
+group,"1, 2, 3",Whether participants are being asked to rate an individual that is from the group previously mentioned by the speaker or not,"mentioned = group previously mentioned, unmentioned = group that the speaker did not talk about",
+property,"1, 2, 3","Target property introduced by the speaker (e.g., ""Zarpies are good at baking pizzas"")","pizza = ""baking pizzas"", photo = ""taking photos"", paint = ""painting pictures"", piano = ""playing the piano"", tree = ""climbing trees""","Study 1 and 2 used climbing trees; Study 3, we replaced that property with ""taking photos"" because we needed all properties to be something individuals could do inside"
+trial_type,"1, 2, 3",what task participant's were doing,"attn_check = category knowledge check, manipulation check, sound check, or winograd questions, see `trial` column for which; test = novel category inference task; adhoc = context-dependent pragmatic task (Stiller, Goodman, & Frank 2015); warm-up = warm-up animal task in Study 3",
+age_exact,"1, 2, 3",Participants' exact age on date of test,,
+age_year,"1, 2, 3",Participants age (in years),,
+age_categorical,"1, 2, 3",Participants' age (in bins),"4 = 4-year-olds, 5 = 5-year-olds, 6 = 6-year-olds (and early 7s in Study 3), 8 = adults",
+gender,"1, 2, 3",Participant's gender,"female, male (1 participant identified as trans girl) ",
+race_bin,"1, 2, 3",Participant's self-reported race,"Asian, Black, Middle Eastern or North African, Mixed, White",
+hispanic,"1, 2, 3","Whether participants identify as hispanic, latino, or spanish","1 = yes, 0 = no",
