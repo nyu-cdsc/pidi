@@ -8,7 +8,7 @@
 # omitted from analyses
 expt1_inference_child_gee <- expt1_inference_child %>%
   filter(!is.na(age_exact))  %>% 
-  arrange(id)
+  arrange(id, trial_order)
 
 expt1_inference_child_results <- geeglm(
   inf ~ condition + age_exact + condition*age_exact, 
@@ -19,7 +19,6 @@ expt1_inference_child_results <- geeglm(
 summary(expt1_inference_child_results)
 expt1_inference_child_anova <- anova(expt1_inference_child_results)
 expt1_inference_child_anova
-
 
 # Johnson-Neyman Technique
 # first converting condition to numeric factor

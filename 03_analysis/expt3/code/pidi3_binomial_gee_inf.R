@@ -3,14 +3,8 @@
 # (Yes to mentioned and no to previously mentioned) by: 
 # (1) age (categorical), 
 # (2) condition (generic/specific)
-expt3_inference_gee <- expt3_inference
-
-expt3_inference_gee$age_categorical <- ifelse(expt3_inference_gee$age_categorical == 7, 
-                                              6, expt3_inference_gee$age_categorical)
-expt3_inference_gee$age_categorical <- as.factor(expt3_inference_gee$age_categorical)
-
-expt3_inference_gee <- expt3_inference_gee %>% 
-  arrange(age_categorical, id)
+expt3_inference_gee <- expt3_inference %>% 
+  arrange(age_categorical, id, trial_order)
 
 expt3_inference_results <- geeglm(
   inf ~ condition + age_categorical + condition*age_categorical, 

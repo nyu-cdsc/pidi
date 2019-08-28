@@ -4,6 +4,9 @@
 # (2) condition (generic/specific), and 
 # (3) group type (mentioned/unmentioned) [within-subject]
 
+expt3_test <- expt3_test %>% 
+  arrange(age_categorical, id, trial_order)
+
 expt3_test_results <- geeglm(
   response ~ condition + age_categorical + group + condition*age_categorical + 
     condition*group + age_categorical*group + group*condition*age_categorical, 

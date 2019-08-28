@@ -14,6 +14,14 @@ expt2_test <- expt2_test %>%
 
 expt2_test$new_id <- cumsum(!duplicated(expt2_test$id))
 
+expt2_inference_trial_order <- expt2_test %>% 
+  ungroup() %>%
+  arrange(trial_order) %>% 
+  distinct(id, property, .keep_all = TRUE) %>% 
+  select(id, property, trial_order) %>% 
+  mutate(trial_order = ifelse(trial_order %% 2 == 0, trial_order - 1,
+                              trial_order))
+
 # Creating another data frame where we compare trial by trial if participants
 # responded "yes" for mentioned group and "no" for previously unmentioned group
 expt2_inference <- expt2_test %>%
@@ -21,4 +29,5 @@ expt2_inference <- expt2_test %>%
   tidyr::spread(value = response, key = group) %>% 
   dplyr::mutate(inf = ifelse(mentioned == 1 & unmentioned == 0, 1, 0)) %>%
   dplyr::group_by(id) %>% 
-  dplyr::mutate(inf_avg = mean(inf))
+  dplyr::mutate(inf_avg = mean(inf)) %>% 
+  full_join(expt2_inference_trial_order)

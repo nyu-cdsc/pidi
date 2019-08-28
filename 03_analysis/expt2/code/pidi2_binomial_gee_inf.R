@@ -2,6 +2,8 @@
 # Looking at trials where participant made inference
 # (Yes to mentioned and no to previously mentioned) by: 
 # (2) condition (generic/specific)
+expt2_inference <- expt2_inference %>% 
+  arrange(id, trial_order)
 
 expt2_inference_results <- geeglm(
   inf ~ condition, 

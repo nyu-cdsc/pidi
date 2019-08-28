@@ -75,19 +75,10 @@ source(here::here("03_analysis", "expt1", "code", "pidi1_binomial_gee_inf.R"))
 source(here::here("03_analysis", "expt1", "code", "pidi1_binomial_gee_inf_child.R"))
 ```
 
-```{r, include = FALSE}
-expt1_test_summary <- summarySEwithin(expt1_test, "response", betweenvars = c("age_categorical", "condition"), withinvars = "group")
-
-expt1_test_summary <- expt1_test_summary %>% 
-  mutate(ci_max = response + ci,
-         ci_min = response - ci)
-```
-
-
 **Property Extension.** First, we examined the likelihood of extending the target property (i.e., responding "yes") to other individuals as a function of the individual's group membership (from previously mentioned or unmentioned group), participant's age, and language condition (Generic or Specific; preregistered on OSF https://osf.io/c3fpv/). Participants extended the target property more to members of the previously mentioned kind than the unmentioned kind  (Group: $\chi^2$(`r expt1_test_anova$Df[3]`) = `r round((expt1_test_anova$X2[3]),2)`, *p* `r pformat(expt1_test_anova[3,3])`), but the tendency to do so varied by the language children heard (Group x Condition: $\chi^2$(`r expt1_test_anova$Df[5]`) = `r round((expt1_test_anova$X2[5]),2)`, *p* `r pformat(expt1_test_anova[5,3])`) and age (Age x Group: $\chi^2$(`r expt1_test_anova$Df[6]`) = `r round((expt1_test_anova$X2[6]),2)`, *p* `r pformat(expt1_test_anova[6,3])`; Age x Group x Condition: $\chi^2$(`r expt1_test_anova$Df[7]`) = `r round((expt1_test_anova$X2[7]),2)`, *p* `r pformat(expt1_test_anova[7,3])`, see Figure 2). All other effects had ps > .10.
 
 ```{r, include=FALSE}
-
+# these blank cells are just to help parse errors in compiling in RMarkdown
 ```
 
 To tease apart the interaction between age, condition, and group, we used separate GEEs to analyze the simple effects of condition and stimulus for each age group. At each age, participants responded that the individual from the unmentioned kind did not have the property more often if they heard the property described with generic than specific language (Condition x Group: 4s: $\chi^2$(`r expt1_test4_anova$Df[3]`) = `r round((expt1_test4_anova$X2[3]),2)`, *p* `r pformat(expt1_test4_anova[3,3])`, 5s: $\chi^2$(`r expt1_test5_anova$Df[3]`) = `r round((expt1_test5_anova$X2[3]),2)`, *p* `r pformat(expt1_test5_anova[3,3])`; 6s: $\chi^2$(`r expt1_test6_anova$Df[3]`) = `r round((expt1_test6_anova$X2[3]),2)`, *p* `r pformat(expt1_test6_anova[3,3])`; adults: $\chi^2$(`r expt1_testadult_anova$Df[3]`) = `r round((expt1_testadult_anova$X2[3]),2)`, *p* `r pformat(expt1_testadult_anova[3,3])`). 
@@ -113,102 +104,9 @@ When examining both the child and adult data, we found that participants were mo
 When we examined the child data alone (with age treated continuously), the two-way interaction between age and condition remained significant ($\chi^2$(`r expt1_inference_child_anova$Df[3]`) = `r round((expt1_inference_child_anova$X2[3]),2)`, *p* `r pformat(expt1_inference_child_anova[3,3])`). Using the Johnson-Neyman procedure (Johnson & Fay, 1950), we found that children older than `r expt1_jn_value` years of age made the expected inference significantly more frequently after hearing generic language than specific language (see Figure 4), and the tendency to do increased with age.
 
 ```{r, include=FALSE}
-# Johnson-Neyman plot
-expt1_jn_inference_plot <- 
-  expt1_jnplot + 
-  theme(legend.position = c(.8,.15)) +
-  guides(linetype = FALSE) + 
-  labs(x = "Age",
-       y = "Simple slope of condition\npredicting expected inference") + 
-  geom_segment(aes(x = (as.numeric(expt1_jn_value) + .6),
-                        y = 5,
-                        xend = (as.numeric(expt1_jn_value) + .1),
-                        yend = 5),
-                    colour = 'black',
-                    size = .5,
-                    arrow = arrow(length = unit(0.3, "cm")))+
-  annotate("label", 
-           x = (as.numeric(expt1_jn_value) + 1.1), 
-           y = 5, 
-           label = paste(round(as.numeric(expt1_jn_value), 1), "years"),
-           label.padding = unit(0.55, "lines"),
-           fontface = "bold") 
-
-expt1_jn_test_plot_unmentioned <- 
-  expt1_jn_unmentioned$plot + 
-  labs(x = "Age",
-       y = "",
-       title = "Unmentioned group") + 
-  theme(legend.position = c(.85,.85),
-        plot.title = element_text(face = "plain"),
-        axis.title = element_text(size = 14)) +
-  guides(linetype = FALSE) + 
-  geom_segment(aes(x = (as.numeric(expt1_test_jn_unmentioned_value) + .6),
-                        y = 1.5,
-                        xend = (as.numeric(expt1_test_jn_unmentioned_value) + .2),
-                        yend = 1.5),
-                    colour = 'black',
-                    size = .5,
-                    arrow = arrow(length = unit(0.3, "cm")))+
-  annotate("label", 
-           x = (as.numeric(expt1_test_jn_unmentioned_value) + 1), 
-           y = 1.5, 
-           label = paste(round(as.numeric(expt1_test_jn_unmentioned_value), 1), "years"),
-           label.padding = unit(0.55, "lines"),
-           fontface = "bold") 
-
-
-expt1_jn_test_plot_mentioned <- 
-  expt1_jn_mentioned$plot + 
-  labs(x = "Age",
-       y = "Simple slope of condition\npredicting extension of property",
-       title = "Mentioned group") + 
-  theme(legend.position = "none",
-        plot.title = element_text(face = "plain"),
-        axis.title = element_text(size = 14)) + 
-  geom_segment(aes(x = (as.numeric(expt1_test_jn_mentioned_value) + .6),
-                        y = 4,
-                        xend = (as.numeric(expt1_test_jn_mentioned_value) + .2),
-                        yend = 4),
-                    colour = 'black',
-                    size = .5,
-                    arrow = arrow(length = unit(0.3, "cm")))+
-  annotate("label", 
-           x = (as.numeric(expt1_test_jn_mentioned_value) + 1), 
-           y = 4, 
-           label = paste(round(as.numeric(expt1_test_jn_mentioned_value), 1), "years"),
-           label.padding = unit(0.55, "lines"),
-           fontface = "bold") 
-
-test_plot <- ggdraw() +
-  draw_plot(expt1_jn_test_plot_unmentioned, x = 0.5, y = 0, width = .5, height = 1) + 
-  draw_plot(expt1_jn_test_plot_mentioned, x = 0, y = 0, width = .5, height = 1) 
-
-
-
-
-expt1_jn_mentioned$plot
+# Plots for johnson-neyman technique (both property extension and inferences)
+source(here::here("03_analysis", "expt1", "code", "pidi1_jn_plot.R")) 
 ```
-
-
-```{r, include=FALSE}
-
-
-expt1_test_summary_adult = summarySEwithin(data = expt1_test_adult,
-                                           measurevar = "response",
-                                           betweenvars = c("condition",
-                                                           "age_categorical"),
-                                           withinvars = "group")
-
-expt1_inference_summary_adult = summarySE(data = expt1_inference_adult,
-                                          measurevar = "inf",
-                                          groupvars = c("condition",
-                                                        "age_categorical"))
-
-
-
-```
-
 
 ```{r plot1_expt1, include=FALSE} 
 # Plot plotting how many trials participants extend property to new individuals of mentioned and unmentioned group 
@@ -217,16 +115,6 @@ source(here::here("03_analysis", "expt1", "code", "pidi1_property_extension_plot
 # Plot plotting how many trials participants make expected inference (yes to mentioned and no to unmentioned) 
 source(here::here("03_analysis", "expt1", "code", "pidi1_inference_plot.R")) 
 ``` 
-
-```{r, include=FALSE}
-expt1_plot_prop_extension
-```
-
-```{r, include=FALSE}
-expt1_plot_inference 
-```
-*Figure 3.* Proportion of trials that participants made the expected inference (i.e., responded "yes" individual of mentioned group has target property but "no", individual of unmentioned group does not) by age and condition. Error bars and bands reflect 95% CIs. Small shapes reflect individual averages, and large shapes and lines reflect group averages. 
-
 
 ```{r, include=FALSE}
 expt1_test_figure <- ggdraw() +

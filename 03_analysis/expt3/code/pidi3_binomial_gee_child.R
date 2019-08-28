@@ -7,8 +7,8 @@
 
 # 1 kid doesn't have a dob, so no exact age
 # omitted from analyses
-expt3_test_child_gee <- expt3_test %>%
-  filter(age_exact < 7.5)
+expt3_test_child_gee <- expt3_test_child %>%
+  arrange(id, trial_order) 
 
 expt3_test_child_results <- geeglm(
   response ~ condition + age_exact + group + condition*age_exact + 
@@ -20,7 +20,6 @@ expt3_test_child_results <- geeglm(
 summary(expt3_test_child_results)
 expt3_test_child_anova <- anova(expt3_test_child_results)
 expt3_test_child_anova
-
 
 expt3_test_child_emtrends <- as.data.frame(emtrends(expt3_test_child_results, 
                                                     ~ condition | group, 

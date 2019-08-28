@@ -6,6 +6,13 @@ expt1_test_child_plot <- expt1_test_child %>%
 expt1_test_adult_plot <- expt1_test_adult %>%
   distinct(id, group, .keep_all = TRUE) 
 
+# Summary data for plot
+expt1_test_summary_adult = summarySEwithin(data = expt1_test_adult,
+                                           measurevar = "response",
+                                           betweenvars = c("condition",
+                                                           "age_categorical"),
+                                           withinvars = "group")
+
 # Plotting proportion of trials participants extend 
 # property to members of mentioned and unmentioned groups
 expt1_plot_prop_extension <- ggplot() + 

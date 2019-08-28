@@ -5,7 +5,7 @@
 # (2) condition (generic/specific)
 
 expt1_inference <- expt1_inference %>% 
-  arrange(id)
+  arrange(id, trial_order)
 
 expt1_inference_results <- geeglm(
   inf ~ condition + age_categorical + condition*age_categorical, 

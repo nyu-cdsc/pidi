@@ -6,8 +6,8 @@
 
 # 1 kid doesn't have a dob, so no exact age
 # omitted from analyses
-expt3_inference_child <- expt3_inference %>%
-  filter(age_exact < 7.5 & age_exact > 3.99)
+expt3_inference_child <- expt3_inference_child %>%
+  arrange(id, trial_order)
 
 expt3_inference_child_results <- geeglm(
   inf ~ condition + age_exact + condition*age_exact, 
@@ -18,6 +18,7 @@ expt3_inference_child_results <- geeglm(
 summary(expt3_inference_child_results)
 expt3_inference_child_anova <- anova(expt3_inference_child_results)
 expt3_inference_child_anova
+
 
 expt3_inference_child_nf <- expt3_inference_child
 expt3_inference_child_nf$condition <- ifelse(expt3_inference_child_nf$condition == "knowledge", 1, 0)

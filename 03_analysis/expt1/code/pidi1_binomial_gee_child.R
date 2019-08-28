@@ -22,7 +22,6 @@ summary(expt1_test_child_results)
 expt1_test_child_anova <- anova(expt1_test_child_results)
 expt1_test_child_anova
 
-
 # Estimating marginal slopes and means
 expt1_test_child_emtrends <- as.data.frame(emtrends(expt1_test_child_results, 
                                       ~ condition | group, 
